@@ -76,8 +76,8 @@
             color: transparent; /* Makes the placeholder invisible */
         }
 
-        #profile-pic, #website {
-            display: none;
+        #profile-pic, #website, #company-name {
+            display: none; /* Hide the company name textbox */
         }
 
         .footer {
@@ -107,9 +107,8 @@
             <label for="designation">Designation:</label>
             <input type="text" id="designation" placeholder="Enter your designation">
 
-            <!-- Company Name Field -->
-            <label for="company-name">Company Name:</label>
-            <input type="text" id="company-name" placeholder="Enter company name">
+            <!-- Company Name Field (hidden and set to "Singer (Sri Lanka) PLC") -->
+            <input type="text" id="company-name" value="Singer (Sri Lanka) PLC" placeholder="Company name" />
 
             <!-- Department Field -->
             <label for="department">Department:</label>
