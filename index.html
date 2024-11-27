@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #FF0000;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        textarea {
+            width: calc(100% - 20px);
+            height: 100px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px;
+        }
+        .button {
+            margin-top: 20px;
+            display: block;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #FF0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        .signature-preview {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ffffff;
+            background-color: #fffefe;
+            border-radius: 5px;
+        }
+        .signature-preview img {
+            width: 105px;
+            height: auto;
+            padding: 7px;
+        }
+
+        input::placeholder {
+            color: transparent; /* Makes the placeholder invisible */
+        }
+
+        #profile-pic, #website {
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: #666;
+        }
+        .footer a {
+            color: #FF0000;
+            text-decoration: none;
+        }
+    </style>
+    <!-- Add html2canvas library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <h1>Email Signature Generator</h1>
+    <div class="container">
+        <h2>Fill Out the Information</h2>
+        <form id="signature-form">
+            <!-- Name Field -->
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" placeholder="Enter your full name">
+
+            <!-- Designation Field -->
+            <label for="designation">Designation:</label>
+            <input type="text" id="designation" placeholder="Enter your designation">
+
+            <!-- Company Name Field -->
+            <label for="company-name">Company Name:</label>
+            <input type="text" id="company-name" placeholder="Enter company name">
+
+            <!-- Department Field -->
+            <label for="department">Department:</label>
+            <input type="text" id="department" placeholder="Enter your department name">
+
+            <!-- Office Address Field -->
+            <label for="address">Office Address:</label>
+            <textarea id="address" placeholder="Enter the office address"></textarea>
+
+            <!-- Contact Numbers Field -->
+            <label for="contact">Contact Numbers (comma-separated):</label>
+            <input type="text" id="contact" placeholder="E.g., 0115400400, 0773446458">
+
+            <!-- Website Field -->
+            <input type="text" id="website" value="https://www.singer.lk" placeholder="Enter company website URL">
+
+            <!-- Profile Image URL Field (hidden) -->
+            <input type="text" id="profile-pic" value="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGkAAAB4CAIAAAB+aktTAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2RpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDoyQUNGNTJENzU4NkZFQjExQTc1RkFFNzQ4OEU1QUVEOCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBNzkwODNCRjc3MUUxMUVCQkEwNTlGQzYzODEyNTE5NiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBNzkwODNCRTc3MUUxMUVCQkEwNTlGQzYzODEyNTE5NiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGOTY5MTMzNzUwNzZFQjExOTUwNjg4QzlDNkY1RDdDNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoyQUNGNTJENzU4NkZFQjExQTc1RkFFNzQ4OEU1QUVEOCIvPiA8L3JkZjpEZXNjcmlwdGlv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" placeholder="Enter the URL of your profile image">
+
+            <!-- Generate Signature Button -->
+            <div class="button">
+                <button type="button" onclick="generateSignature()">Generate Signature</button>
+            </div>
+        </form>
+
+        <!-- Signature Preview Section -->
+        <div class="signature-preview" id="signature-preview">
+            <!-- Generated email signature will appear here -->
+        </div>
+
+        <!-- Copy HTML Button -->
+        <div class="button" id="copy-button" style="display:none;">
+            <button onclick="copyHTML()">Copy Signature</button>
+        </div>
+
+    </div>
+    
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>Created by <a href="" target="_blank">Hasitha-MATARA SC</a> (HASITHAELECTRONICS & ELECTRICALS)</p>
+    </div>
+
+    <script>
+        // Disable Right-click and Keyboard Shortcuts
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert("Right-click is disabled!");
+        });
+
+        document.onkeydown = function(e) {
+            if ((e.ctrlKey && e.keyCode === 85) || (e.keyCode === 123)) {
+                e.preventDefault();
+                alert("Viewing source is disabled!");
+            }
+        };
+
+        // Function to generate signature
+        function generateSignature() {
+            // Fetch values from the form
+            const name = document.getElementById("name").value;
+            const designation = document.getElementById("designation").value;
+            const companyName = document.getElementById("company-name").value;
+            const department = document.getElementById("department").value;
+            const address = document.getElementById("address").value;
+            const contact = document.getElementById("contact").value;
+            const website = document.getElementById("website").value;
+            const profilePic = document.getElementById("profile-pic").value;
+
+            // Generate the signature HTML
+            const signatureHTML = `
+                <table style="background:#ffffff;" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td valign="top">
+                            <!-- Profile Image -->
+                            <img src="${profilePic}" width="105" height="120" border="0" style="padding:7px;" />
+                        </td>
+                        <td style="padding-left:8px;padding-top:5px;" valign="top">
+                            <span style="font-family: Arial; font-size: 11pt; color:#FF0000; line-height:1.3 !important;">
+                                <b>${name}</b>
+                            </span><br>
+                            <span style="font-family: Arial; font-size: 9pt; color:#000000; line-height:1.2 !important;">
+                                ${designation}
+                            </span><br>
+                            <span style="font-family: Arial; font-size: 11pt; color:#FF0000; line-height:1.3 !important;">
+                                </SPAN><br><SPAN style="FONT-FAMILY: Arial; FONT-SIZE: 11pt; color:#FF0000; !important; line-height:1.3 !important;">
+                                <b>${companyName}</b>
+                            </span><br>
+                            <span style="font-family: Arial; font-size: 11pt; color:#FF0000; line-height:1.3 !important;">
+                                <b>${department}</b>
+                            </span><br>
+                            <span style="font-family: Arial; font-size: 9pt; color:#000000; line-height:1.3 !important;">
+                                ${address}
+                            </span><br>
+                            <span style="font-family: Arial; font-size: 9pt; color:#000000; line-height:1.3 !important;">
+                                ${contact}
+                            </span><br>
+                            <span style="font-family: Arial; font-size: 9pt; color:#FF0000; line-height:1.3 !important;">
+                                <a href="https://www.singersl.com" style="text-decoration:none; color:#FF0000;">www.singer.lk</a>
+                            </span>
+                        </td>
+                    </tr>
+                </table><br><br>
+            `;
+
+            // Insert the signature into the preview area
+            document.getElementById("signature-preview").innerHTML = signatureHTML;
+
+            // Show the Copy HTML and Download Image buttons
+            document.getElementById("copy-button").style.display = "block";
+        }
+
+        // Function to copy the signature HTML
+        function copyHTML() {
+            const signatureHTML = document.getElementById("signature-preview").innerHTML;
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = signatureHTML;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempTextArea);
+            alert("HTML signature copied to clipboard!");
+        }
+    </script>
+</body>
+</html>
